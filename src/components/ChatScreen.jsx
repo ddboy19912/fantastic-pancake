@@ -1,5 +1,14 @@
 import React from 'react';
 import { useChatContext } from '../context/ChatContext';
+import bg from '../assets/Default WhatsApp background for people who lost it_ Requested by u_Marvin_der_kuhle_.jpeg';
+import {
+  PhoneIcon,
+  VideoCameraIcon,
+  MagnifyingGlassIcon,
+  FaceSmileIcon,
+  PaperClipIcon,
+  MicrophoneIcon,
+} from '@heroicons/react/24/outline';
 
 const ChatScreen = () => {
   const { currentChat } = useChatContext();
@@ -20,25 +29,39 @@ const ChatScreen = () => {
                     />
                     <h1 className="font-bold text-lg">{chat.name}</h1>
                   </div>
-                  <div className="flex gap-3">
-                    <span>camera</span>
-                    <span>phone</span>
+                  <div className="flex gap-7">
+                    <span>
+                      <VideoCameraIcon className="w-5 cursor-pointer" />
+                    </span>
+                    <span>
+                      <PhoneIcon className="w-5 cursor-pointer" />
+                    </span>
                     <span className="bg-gray-300 w-0.5" />
-                    <span>search</span>
+                    <span>
+                      <MagnifyingGlassIcon className="w-5 cursor-pointer" />
+                    </span>
                   </div>
                 </div>
-                <div className="overflow-auto h-full mt-4">body</div>
-                <div className="flex bg-white px-2 justify-between items-center h-16 shadow-topShadow gap-4">
-                  <div className="flex gap-4">
-                    <span>smiley</span>
-                    <span>clip</span>
+                <div className="overflow-auto h-full mt-4 bg-slate-500">
+                  <img src={bg} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex bg-white px-4 justify-between items-center h-16 shadow-topShadow gap-4">
+                  <div className="flex gap-5">
+                    <span>
+                      <FaceSmileIcon className="w-5 cursor-pointer" />
+                    </span>
+                    <span>
+                      <PaperClipIcon className="w-5 cursor-pointer" />
+                    </span>
                   </div>
                   <input
                     type="text"
                     placeholder="Type a message"
                     className="w-full focus:border-none focus:outline-none h-full"
                   />
-                  <div>voice</div>
+                  <div>
+                    <MicrophoneIcon className="w-5 cursor-pointer" />
+                  </div>
                 </div>
               </div>
             );
