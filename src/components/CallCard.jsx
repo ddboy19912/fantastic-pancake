@@ -23,9 +23,10 @@ const CallCard = ({ image, name, id, data }) => {
           />
           <div className="flex flex-col w-full flex-[2]">
             <h1 className="font-bold text-lg">{name}</h1>
-            {data.calls.map((call) => {
+            {data.calls.map((call, i) => {
               return (
                 <p
+                  key={i}
                   className={`${
                     call.status === 'Missed' ? 'text-red-400' : 'text-gray-400'
                   }`}

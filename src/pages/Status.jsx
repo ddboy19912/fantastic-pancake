@@ -3,7 +3,7 @@ import { PageHOC } from '../components';
 
 const Status = () => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen">
       <div className="px-6"></div>
     </div>
   );

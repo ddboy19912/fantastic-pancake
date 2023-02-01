@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, storage, db } from '../firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc } from 'firebase/firestore';
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  getStorage,
+} from 'firebase/storage';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+// import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const [err, setErr] = useState(false);
-  const navigate = useNavigate();
+  //   const [err, setErr] = useState(false);
+  //   const { navigate } = useNavigate();
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -21,43 +27,31 @@ const Register = () => {
     const phoneNumber = e.target[3].value;
     const profilePic = e.target[4].files[0];
 
+    const newStorage = getStorage();
+
     try {
-      //Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      //Create a unique image name
-      const date = new Date().getTime();
-      const storageRef = ref(storage, `${displayName + date}`);
+      const user = res.user;
 
-      console.log(res);
+      const storageRef = ref(
+        newStorage,
+        `profileImages/${user.uid}/${displayName}`
+      );
 
-      await uploadBytesResumable(storageRef, profilePic).then(() => {
-        getDownloadURL(storageRef).then(async (downloadURL) => {
-          try {
-            //Update profile
-            await updateProfile(res.user, {
-              displayName,
-              photoURL: downloadURL,
-              phoneNumber,
-            });
-            //create user on firestore
-            await setDoc(doc(db, 'users', res.user.uid), {
-              uid: res.user.uid,
-              displayName,
-              email,
-              phoneNumber,
-              photoURL: downloadURL,
-            });
+      const uploadTask = uploadBytesResumable(storageRef, profilePic);
 
-            //create empty user chats on firestore
-            await setDoc(doc(db, 'userChats', res.user.uid), {});
-            navigate('/');
-          } catch (err) {
-            console.log(err);
-            setErr(true);
-          }
-        });
-      });
+      uploadTask.on(
+        (error) => {
+          // Handle unsuccessful uploads
+          console.log('error');
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log('File available at', downloadURL);
+          });
+        }
+      );
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -65,7 +59,7 @@ const Register = () => {
   }
 
   return (
-    <div className="bg-green-300 h-screen flex items-center justify-center w-full">
+    <div className="bg-green-300 h-screen flex items-center justify-center">
       <div className="bg-white rounded-lg px-16 py-5 flex flex-col gap-8 shadow-xl">
         <div className="flex flex-col gap-4">
           <h1 className="font-semibold text-3xl text-green-600">ChatsApp</h1>
@@ -111,7 +105,6 @@ const Register = () => {
             Create Account
           </button>
         </form>
-        {err && <p>Something went wrong</p>}
         <p>
           You have an account ?{' '}
           <Link to="/login" className="text-green-400">

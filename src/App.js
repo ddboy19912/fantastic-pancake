@@ -1,24 +1,35 @@
 import React from 'react';
 import { Home, Calls, Status, Login, Register } from './pages';
-import Sidebar from './components/Sidebar';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useChatContext } from './context/ChatContext';
 
 const App = () => {
-  const [auth, setAuth] = React.useState(false);
-  if (!auth)
-    return (
-      <div>
-        <Register />
-      </div>
-    );
+  const { currentUser } = useChatContext();
+
+  const ProtectedRoute = ({ children }) => {
+    if (!currentUser) {
+      return <Navigate to="/login" />;
+    }
+    return children;
+  };
 
   return (
-    <div className="flex flex-row min-h-screen">
-      <Sidebar />
+    <div className="min-h-screen">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/calls" element={<Calls />} />
-        <Route path="/status" element={<Status />} />
+        <Route path="/">
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="calls" element={<Calls />} />
+          <Route path="status" element={<Status />} />
+        </Route>
       </Routes>
     </div>
   );

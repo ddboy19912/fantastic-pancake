@@ -19,15 +19,18 @@ const ChatScreen = () => {
         <>
           {currentChat.map((chat) => {
             return (
-              <div className="h-screen bg-slate-50 flex flex-col" key={chat.id}>
+              <div
+                className="h-screen bg-slate-50 flex flex-col"
+                key={chat.uid}
+              >
                 <div className="flex justify-between items-center px-6 mt-6">
                   <div className="flex items-center gap-4">
                     <img
-                      src={chat.image}
+                      src={chat.photoURL}
                       alt=""
                       className="w-14 h-14 object-cover rounded-full"
                     />
-                    <h1 className="font-bold text-lg">{chat.name}</h1>
+                    <h1 className="font-bold text-lg">{chat.displayName}</h1>
                   </div>
                   <div className="flex gap-7">
                     <span>

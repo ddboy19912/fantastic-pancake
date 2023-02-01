@@ -6,10 +6,20 @@ export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
   const [currentChat, setCurrentChat] = useState(null);
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem('user')) || {}
+  );
   const [currentTab, setCurrentTab] = useState('chat');
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+    });
+    return () => {
+      unsub();
+    };
+  }, []);
 
   return (
     <ChatContext.Provider
@@ -18,6 +28,7 @@ export const ChatProvider = ({ children }) => {
         setCurrentChat,
         currentTab,
         setCurrentTab,
+        currentUser,
       }}
     >
       {children}
